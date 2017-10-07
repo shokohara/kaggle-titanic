@@ -83,4 +83,4 @@ p_survived = model.predict_classes(tx.values)
 submission = pd.DataFrame()
 submission['PassengerId'] = test_ind
 submission['Survived'] = p_survived
-submission.to_csv('submission.csv', index=False)
+submission.to_csv('tmp/submission.csv', index=False)
