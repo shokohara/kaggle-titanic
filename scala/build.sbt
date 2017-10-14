@@ -1,11 +1,11 @@
 lazy val sparkVersion = "2.0.0"
 val framelessVersion = "0.3.0"
 
-lazy val root = project in file(".")
+lazy val root = project
 
 organization := "com.github.shokohara"
 scalaVersion := "2.11.8"
-name := "subscriber"
+name := "titanic"
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % sparkVersion,
   "org.apache.spark" %% "spark-sql" % sparkVersion,
@@ -20,4 +20,4 @@ libraryDependencies ++= Seq(
   "org.typelevel" %% "frameless-cats" % framelessVersion,
   "org.typelevel" %% "frameless-dataset" % framelessVersion
 )
-//mainClass := Option("com.github.s’hokohara.titanic.Main")
+mainClass := Option("com.github.shokohara.titanic.Main")
