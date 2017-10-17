@@ -1,8 +1,6 @@
 lazy val sparkVersion = "2.0.0"
 val framelessVersion = "0.3.0"
 
-lazy val root = project
-
 organization := "com.github.shokohara"
 scalaVersion := "2.11.8"
 name := "titanic"
