@@ -7,7 +7,7 @@ arr = ["Name", "Age", "Sex", "SibSp", "Parch", "Ticket", "Fare", "Cabin", "Embar
 
 
 def func(ldf):
-    ldf["AltSex"] = ldf["Sex"].map({"female": 0, "male": 1}).astype(int)
+    ldf["Sex"] = ldf["Sex"].map({"female": 0, "male": 1}).astype(int)
     # 欠損値が存在するため失敗する
     # ldf["AltEmbarked"] = ldf["Embarked"].map({"C": 0, "Q": 1, "S": 2}).astype(int)
     ldf["AltAge"] = ldf["Age"].fillna(ldf.Age.median())
