@@ -1,8 +1,7 @@
 package com.github.shokohara.titanic
 
-import org.apache.spark.{SparkConf, SparkContext}
-import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
-import shapeless.ops.record.Fields
+import org.apache.spark.SparkConf
+import org.apache.spark.sql.{Dataset, SparkSession}
 
 /**
   * def name_classifier(name_df):
@@ -47,7 +46,7 @@ case class Processed(passengerId: Int,
                      sibSp: Int,
                      parch: String,
                      ticket: String,
-                     fare: Int,
+                     fare: Double,
                      cabin: String,
                      embarked: String,
                      miss: Int,
@@ -56,11 +55,19 @@ case class Processed(passengerId: Int,
                      mr: Int)
 
 import shapeless._
-import shapeless.record._
-import syntax.singleton._
 import record._
+import shapeless.syntax.std.product._
 
 object Main {
+
+  def b(raw: Raw) =
+    if (raw.name contains "Miss") (1, 0, 0, 0)
+    else if (raw.name contains "Mrs") (0, 1, 0, 0)
+    else if (raw.name contains "Master") (0, 0, 1, 0)
+    else if (raw.name contains "Mr") (0, 0, 0, 1)
+    else (0, 0, 0, 0)
+
+  def sex(sex: String) = if (sex == "male") 1 else if (sex == "female") 0 else 0
 
   def main(args: Array[String]): Unit = {
     val conf = new SparkConf().setMaster("local[*]")
@@ -74,39 +81,15 @@ object Main {
       spark.read.format("csv").option("header", "true").option("inferSchema", "true").load("train.csv").as[Raw]
     def nameClassifier(df: Dataset[Raw]): Dataset[Processed] =
       df.map { (raw: Raw) =>
-        val a =
-          if (raw.name contains "Miss") (1, 0, 0, 0)
-          else if (raw.name contains "Mrs") (0, 1, 0, 0)
-          else if (raw.name contains "Master") (0, 0, 1, 0)
-          else if (raw.name contains "Mr") (0, 0, 0, 1)
-          else (0, 0, 0, 0)
-        val sex = if (raw.sex == "male") 1 else if (raw.sex == "female") 0
-        Processed(
-          raw.passengerId,
-          raw.survived,
-          raw.pClass,
-          sex,
-          raw.age.toInt,
-          raw.sibSp,
-          raw.parch,
-          raw.ticket,
-          raw.fare.toInt,
-          raw.cabin,
-          raw.embarked,
-          a._1,
-          a._2,
-          a._3,
-          a._4
-        )
+        val rec2 = LabelledGeneric[Raw].to(raw)
+        Generic[Processed].from(rec2.remove('name)._2.updateWith('age)(_.toInt).updateWith('sex)(sex) ++ b(raw).toHList)
       }
-
     nameClassifier(df).printSchema
-    //      .load("gs://shokohara/train.csv")
-    //      val x: DataFrame = logData.map(_.getAs[])
-    //    logData.show
-    //    val numAs = logData.filter(line => line.contains("a")).count()
-    //    val numBs = logData.filter(line => line.contains("b")).count()
-    //    println(s"Lines with a: $numAs, Lines with b: $numBs")
     spark.stop()
   }
+}
+
+object PrintUtiltity {
+  def p(data: String) =
+    println(data)
 }
