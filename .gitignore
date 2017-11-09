@@ -1,2 +1,6 @@
 /.ipynb_checkpoints/
 /tmp
+/.cache/
+/.ipython/
+/.local/
+__pycache__/

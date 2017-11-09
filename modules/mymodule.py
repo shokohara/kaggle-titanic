@@ -1,4 +1,5 @@
 import pandas as pd
+from sklearn.preprocessing import Imputer
 
 
 def name_classifier(name_df):
@@ -22,8 +23,23 @@ def name_classifier(name_df):
     return name_class_df
 
 
+def mapSex(ldf):
+    ldf["Sex"] = ldf["Sex"].map({"female": 0, "male": 1}).astype(int)    
+    return ldf
+
+
+def mapAge(ldf):
+    imr = Imputer(missing_values='NaN', strategy='mean', axis=0)
+    imr = imr.fit(df)
+    imputed_data = imr.transform(df.values)
+    ldf["Age"] = imputed_data
+    print(imputed_data)
+    return ldf
+
+
 def func(ldf):
     arr = ["Name"]
-    ldf["Sex"] = ldf["Sex"].map({"female": 0, "male": 1}).astype(int)
+    mapSex(ldf)
+#    mapAge(ldf)
     ldf = pd.concat([ldf, name_classifier(ldf.Name)], axis=1)
     return ldf.drop(arr, axis=1)
