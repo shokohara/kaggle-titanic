@@ -4,6 +4,10 @@ from sklearn.ensemble import RandomForestClassifier
 import csv
 from malss import MALSS
 import time
+import better_exceptions
+
+
+better_exceptions.MAX_LENGTH = None
 
 
 def mapSex(df):
@@ -62,9 +66,7 @@ df = pd.read_csv("train.csv")
 df = func(df)
 forest = RandomForestClassifier(n_estimators=10, max_depth=7, max_features=0.3)
 forest = forest.fit(df.values[:, 2:], df["Survived"].values)
-test_data = func(pd.read_csv("test.csv")).\
-
-    values
+test_data = func(pd.read_csv("test.csv"))
 xs_test = test_data[:, 1:]
 output = forest.predict(xs_test)
 zip_data = zip(test_data[:, 0].astype(int), output.astype(int))
