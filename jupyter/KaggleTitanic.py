@@ -63,7 +63,7 @@ def mapName(df):
 
 
 def func(df):
-    arr = ["SibSp", "Parch", "Ticket", "Cabin", "Sex", "Age", "Fare"]
+    arr = ["SibSp", "Parch", "Ticket", "Cabin", "Age", "Fare"]
     df = mapName(df)
     df = mapSex(df)
     df = mapEmbarked(df)
