@@ -15,7 +15,6 @@ pd.set_option('display.width', 1000)
 
 def mapSex(df):
     df["Sex"] = df["Sex"].map({"female": 0, "male": 1}).astype(int)
-    # df = df.drop("Sex", axis=1)
     return df
 
 
@@ -60,16 +59,25 @@ def mapName(df):
     df = pd.concat([df, name_classifier(df.Name)], axis=1)
     df = df.drop("Name", axis=1)
     return df
+from sklearn.feature_extraction.text import FeatureHasher
+def mapTicket(df):
+    hasher = FeatureHasher(input_type='string')
+    X = hasher.transform(df.Ticket.values)
+    df.Ticket = X
+    print(df)
+    return df
 
 
 def func(df):
-    arr = ["SibSp", "Parch", "Ticket", "Cabin", "Age", "Fare"]
+    # arr = ["SibSp", "Parch", "Ticket", "Cabin", "Age", "Fare"]
+    arr = ["Cabin", "Age"]
     df = mapName(df)
     df = mapSex(df)
     df = mapEmbarked(df)
     df = mapAge(df)
     df = mapFare(df)
     df = mapFamilySize(df)
+    df = mapTicket(df)
     return df.drop(arr, axis=1)
 
 
