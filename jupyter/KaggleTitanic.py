@@ -26,11 +26,13 @@ def mapEmbarked(df):
 
 def mapAge(df):
     # df["Age"] = df["Age"].fillna(df.Age.median())
+    df = df.drop("Age", axis=1)
     return df
 
 
 def mapFare(df):
     # df["Fare"] = df["Fare"].fillna(df.Fare.median())
+    df = df.drop("Fare", axis=1)
     return df
 
 
@@ -61,16 +63,14 @@ def mapName(df):
     return df
 from sklearn.feature_extraction.text import FeatureHasher
 def mapTicket(df):
-    hasher = FeatureHasher(input_type='string')
-    X = hasher.transform(df.Ticket.values)
-    df.Ticket = X
-    print(df)
+    # hasher = FeatureHasher(input_type='string')
+    # X = hasher.transform(df.Ticket.values)
+    # df.Ticket = X
+    df = df.drop("Ticket", axis=1)
     return df
 
 
 def func(df):
-    # arr = ["SibSp", "Parch", "Ticket", "Cabin", "Age", "Fare"]
-    arr = ["Cabin", "Age"]
     df = mapName(df)
     df = mapSex(df)
     df = mapEmbarked(df)
@@ -78,12 +78,13 @@ def func(df):
     df = mapFare(df)
     df = mapFamilySize(df)
     df = mapTicket(df)
-    return df.drop(arr, axis=1)
+    return df.drop(["Cabin"], axis=1)
 
 
 df = pd.read_csv("train.csv")
 df = func(df)
 print(df.isnull().any())
+print(df.dtypes)
 forest = RandomForestClassifier(n_estimators=10, max_depth=7, max_features=0.3)
 forest = forest.fit(df.values[:, 2:], df["Survived"].values)
 test_data = func(pd.read_csv("test.csv")).values
